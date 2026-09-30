@@ -1,16 +1,18 @@
 ---
 name: iskill-dig-media
-summary: 网络素材挖掘——从 Pixabay 等素材站按关键词搜照片/视频，下载到 dig-media 目录，附来源清单（可商用免署名）。
-description: 当用户要给视频/文案配网络素材、问「找些农场素材」「搜配图」「下几条视频素材」，或 iskill-video-clipper 在无素材时需要补料时使用。触发词：找素材、搜素材、dig media、素材站、pixabay。走 Pixabay 官方 API（可商用、免署名），产物落 {工作区}/dig-media/<关键词slug>/ 并写 manifest.json 来源清单。需一次性配置免费 API key。
+summary: 素材供给中心——Pixabay 图库挖掘（免费）+ AI 图片/视频生成（计费）双供给，统一落盘 dig-media/ 并写 manifest 溯源。
+description: 当用户要给视频/文案配素材、问「找些农场素材」「搜配图」「下几条视频素材」，需要 AI 生成图片/视频素材（「AI 生成一个镜头」「生成空镜视频」），或 iskill-video-clipper 缺素材/AIGC 模式需要补料时使用。触发词：找素材、搜素材、dig media、素材站、pixabay、AI 生成素材。三种供给：①Pixabay 图库（脚本化、免费、可商用免署名）；②AI 生成图片（ImageGen，5-10 credits/张）；③AI 生成视频（VideoGen，约 50-100 credits/5 秒）。产物统一落 {工作区}/dig-media/ 并写 manifest.json 溯源。
 ---
 
 # iskill-dig-media
 
-六步爆款工作流的**素材弹药库**：按关键词从 Pixabay（照片+视频，可商用免署名）搜素材、下载落盘，供 iskill-video-clipper 出片使用。
+六步爆款工作流的**素材供给中心**：两条供给线——**图库挖掘**（Pixabay 脚本下载，免费）与 **AI 生成**（ImageGen/VideoGen 会话工具，计费），产物统一落盘 `dig-media/`、统一 manifest 溯源，供 iskill-video-clipper 等下游消费。
 
 ```
 六步工作流：… → [6]成片(iskill-video-clipper)
-              └─ 无素材时 ← 本 skill（raw/ 与 dig-media/ 都空时自动触发）
+              └─ 缺素材时 ← 本 skill
+                   ├─ 免费级：图库搜索下载（优先）
+                   └─ AI 级：ai-image / ai-video 生成协议（计费，事前确认）
 ```
 
 ## 一次性配置（没有 key 时第一步永远先做这个）
@@ -51,10 +53,15 @@ node scripts/dig_media.mjs music --kw "happy ukulele" --n 3 --out ./dig-media
 ## 产出结构
 
 ```
-dig-media/<关键词slug>/
+dig-media/<关键词slug>/          # 图库素材（脚本下载）
 ├── photo-<id>.jpg        # 大图（约 1280px+）
 ├── video-<id>.mp4        # large/medium 首选档
 └── manifest.json         # 查询词/时间/License/每条来源页+作者+尺寸
+
+dig-media/ai-<关键词slug>/       # AI 生成素材（协议产出，计费）
+├── ai-img-<n>.png        # ImageGen 锚帧/图片
+├── ai-vid-<n>.mp4        # VideoGen 视频（约 5s/条）
+└── manifest.json         # prompt/参数/credits 估算/时间/缓存查重依据
 ```
 
 ## 使用规则（给执行 agent）
@@ -66,7 +73,42 @@ dig-media/<关键词slug>/
 4. **manifest.json 是溯源凭证**：不删不改；视频里用了谁的内容可随时回查。
 5. **License 口径**：Pixabay Content License 可商用免署名，但**别把素材里可辨识的人物/品牌当自家产品代言**；成品涉及广告投放时提示用户复核平台规则。
 6. 下载量少或结果不对味：先换关键词再报错，别硬凑；`0 个素材落盘` 的告警要如实转告。
-7. 与 iskill-video-clipper 的关系：它是**上游补给**——clipper 无素材时会调本 skill；素材已在 `dig-media/` 时 clipper 直接复用，不重复下载。
+7. 与 iskill-video-clipper 的关系：它是**上游补给**——clipper 无素材/AIGC 模式时会调本 skill；素材已在 `dig-media/` 时 clipper 直接复用，不重复下载、不重复计费。
+
+## AI 生成供给（ai-image / ai-video 协议）
+
+**机制说明（硬约束）**：AI 生成走 WorkBuddy 会话内置工具 **ImageGen / VideoGen**——它们没有命令行入口，由执行 agent 在对话中直接调用，**本 skill 不提供脚本**；本节是调用契约（何时调、参数怎么填、产物怎么落盘）。
+
+**成本确认（每次必做）**：ImageGen 约 5-10 credits/张，VideoGen 约 50-100 credits/条（约 5 秒）。**任何生成动作前，必须列出「镜头数 × 单价 = 估算 credits」并获得用户明确确认**；这是工具方的强制要求，也是本 skill 的铁律。
+
+### 调用契约
+
+**ai-image（AI 生成图片）**
+1. `生成前查缓存`：目标目录 `dig-media/ai-<关键词slug>/manifest.json` 里已有同 prompt 产物 → 直接复用，不重复计费
+2. 调 ImageGen：`prompt`（英文视觉描述 + 统一 style 后缀）、`size` 竖屏成片用 `1024x1536`、`output_dir` 指向 `dig-media/ai-<slug>/`
+3. 落盘后把文件改名为 `ai-img-<n>.png`，并在 manifest.json 追加记录：prompt / size / 生成时间 / credits 估算 / output_dir 实际路径
+4. **失败降级**：生成失败最多重试 1 次；仍失败 → 回退图库挖掘补位，并在交付时说明
+
+**ai-video（AI 生成视频）**
+1. 同样先查缓存查重
+2. **锚帧优先**（默认）：关键叙事镜先用 ai-image 出锚帧（风格锚点，图便宜），再调 VideoGen `image=<锚帧路径>` 图生视频；纯空镜/氛围镜直接文生视频即可
+3. VideoGen 参数规范：竖屏成片 `resolution:"1080P"`、文生视频加 `aspect_ratio:"9:16"`（图生视频由锚帧决定）、**`enable_audio:false`（必关——AI 音轨与下游配音/BGM 冲突，声音一律由剪辑管线负责）**、`negative_prompt` 按需（如 "text, watermark, logo"）
+4. 下载产物落 `dig-media/ai-<slug>/ai-vid-<n>.mp4`（工具默认 output_dir 是 generated-videos/，**必须显式指定 output_dir** 或生成后移动落位），manifest.json 追加 prompt / 参数 / credits / 时长
+5. **单条约 5 秒**：下游剪辑段长 2-8s，段内用慢平移/crop 截取所需时长（clipper 已有此动效手段），与节拍卡点兼容
+6. 失败重试最多 1 次（重试也计费）；仍失败 → 图库挖掘降级 + 交付说明
+
+### 统一 style 后缀（风格一致性）
+同一成片的所有 AI 镜头，prompt 末尾追加同一句风格描述（从选题调性推导），例：
+- 纪实乡村：`cinematic documentary style, warm golden hour light, natural colors, 35mm film look`
+- 清新美食：`bright food photography style, soft natural light, shallow depth of field`
+锚帧法是更强的保障：关键镜共享同一张 ImageGen 锚帧的视觉基因。
+
+### AI 生成使用规则（给执行 agent）
+1. **credits 是真金白银**：宁可少生成，不批量囤积；每个 prompt 单独可追溯
+2. prompt 用**英文**写视觉描述（与图库关键词同理，命中率高）；不写文字/水印要求（字幕由剪辑管线负责）
+3. manifest.json 记录的 credits 是**估算值**（工具无余额查询），交付时注明「估算口径」
+4. AI 画面有「AI 感」：真实感选题（纪实/人物/手作）把 AI 镜头限定在空镜/氛围/转场镜，不要替代实拍主体镜
+5. 与 clipper 的关系：clipper 的 `--engine aigc-mix / aigc-full` 模式按本节协议取料；`--engine local` 时本节不启用
 
 ## 注意事项
 
