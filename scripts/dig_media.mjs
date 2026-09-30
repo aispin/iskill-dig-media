@@ -160,8 +160,9 @@ async function doGet(o) {
     for (const h of j.hits || []) {
       for (const s of sizes) {
         if (h.videos?.[s]?.url) {
+          const m = h.videos[s].url.match(/\.(mp4|webm|avi|mov)$/i);
           jobs.push({ kind: "video", id: h.id, url: h.videos[s].url,
-            ext: h.videos[s].url.match(/\.(mp4|webm|avi|mov)$/i)?.[1] || ".mp4",
+            ext: m ? "." + m[1].toLowerCase() : ".mp4",
             tags: h.tags, user: h.user, page: h.pageURL,
             w: h.videos[s].width, h: h.videos[s].height, size_label: s });
           break; // 每条视频只要首选尺寸
