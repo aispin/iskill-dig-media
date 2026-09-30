@@ -4,7 +4,8 @@
 //   dig_media.mjs search --kw "farm harvest" [--type video|photo|all] [--per-page 12]
 //   dig_media.mjs get    --kw "farm harvest" [--type all] [--n 6] [--out ./dig-media]
 //                        [--min-width 1280] [--force] [--sizes large,medium]
-// API key 查找顺序: $PIXABAY_API_KEY → ~/.workbuddy/dig-media.json → ./.dig-media.json ({"pixabay":"xxx"})
+// API key 查找顺序: $PIXABAY_API_KEY → ~/.iskill-dig-media.json → ~/.workbuddy/dig-media.json(遗留) → ./.dig-media.json ({"pixabay":"xxx"})
+// 解藕约定：配置一律存用户主目录 ~/.iskill-*，不绑死任何 agent 的工作区
 
 import { existsSync, readFileSync, writeFileSync, mkdirSync } from "node:fs";
 import { homedir } from "node:os";
@@ -33,11 +34,16 @@ function parseArgs() {
 // ---------- key ----------
 function loadKey() {
   if (process.env.PIXABAY_API_KEY) return { key: process.env.PIXABAY_API_KEY, src: "env" };
-  for (const p of [join(homedir(), ".workbuddy", "dig-media.json"), resolve(".dig-media.json")]) {
+  const candidates = [
+    { p: join(homedir(), ".iskill-dig-media.json"), tag: "user" },
+    { p: join(homedir(), ".workbuddy", "dig-media.json"), tag: "legacy" },
+    { p: resolve(".dig-media.json"), tag: "local" },
+  ];
+  for (const { p, tag } of candidates) {
     if (existsSync(p)) {
       try {
         const j = JSON.parse(readFileSync(p, "utf8"));
-        if (j.pixabay) return { key: j.pixabay, src: p };
+        if (j.pixabay) return { key: j.pixabay, src: tag === "legacy" ? `${p}（遗留路径，建议迁移到 ~/.iskill-dig-media.json）` : p };
       } catch {}
     }
   }
@@ -49,7 +55,7 @@ function dieNoKey() {
 一次性配置（免费，1 分钟）：
   1) 注册/登录 https://pixabay.com → 打开 https://pixabay.com/api/docs/ 页面会显示你的 key
   2) 任选一种落盘：
-     a. echo '{"pixabay":"你的key"}' > ~/.workbuddy/dig-media.json
+     a. echo '{"pixabay":"你的key"}' > ~/.iskill-dig-media.json   # 推荐，用户主目录、跨 agent 通用
      b. export PIXABAY_API_KEY=你的key
 之后重跑即可。`);
   process.exit(2);

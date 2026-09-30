@@ -18,7 +18,7 @@ description: 当用户要给视频/文案配网络素材、问「找些农场素
 1. 注册/登录 https://pixabay.com → 打开 https://pixabay.com/api/docs/ ，页面顶部即显示你的 API key（免费，100 次/分钟）
 2. 落盘任选其一：
    ```bash
-   echo '{"pixabay":"你的key"}' > ~/.workbuddy/dig-media.json   # 推荐，全局可用
+   echo '{"pixabay":"你的key"}' > ~/.iskill-dig-media.json   # 推荐，用户主目录、跨 agent 通用
    # 或 export PIXABAY_API_KEY=你的key
    ```
 
@@ -62,4 +62,5 @@ dig-media/<关键词slug>/
 - 脚本零依赖（Node 22 内置 fetch），不需要 pip/npm 安装任何东西。
 - Pixabay 限频 100 次/60 秒；脚本已带 300ms 错峰，批量别超过几百条。
 - 429（限频）等一分钟重试；BAD_KEY 按配置指引重新核对。
-- 未来扩展 Pexels/其他站：key 写进同一个 JSON（`{"pixabay":"...","pexels":"..."}`），脚本加 `--source` 参数——目前只实现了 pixabay。
+- 未来扩展 Pexels/其他站：key 写进同一个文件（`{"pixabay":"...","pexels":"..."}`），脚本加 `--source` 参数——目前只实现了 pixabay。
+- **配置解藕约定**：本 skill 系列的配置文件一律存用户主目录 `~/.iskill-*`（如 `~/.iskill-dig-media.json`、`~/.iskill-weixin-cookies.txt`），不绑死任何 agent 的工作区；旧 agent 目录里的同名文件仅作遗留兼容读取。
