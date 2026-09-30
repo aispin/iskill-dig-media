@@ -35,7 +35,18 @@ node scripts/dig_media.mjs get --kw "farm harvest" --n 6 --out ./dig-media
 
 # 只搜视频 + 卡最小宽度（保证够竖屏放大）
 node scripts/dig_media.mjs get --kw "rice field" --type video --n 4 --min-width 1280
+
+# 挖 BGM 音乐（Wikimedia Commons 源，免 key）：CC0/PD 优先，CC BY 记录署名信息
+node scripts/dig_media.mjs music --kw "happy ukulele" --n 3 --out ./dig-media
 ```
+
+## 音乐（BGM）说明
+
+- **为什么不是 Pixabay**：官方 API 没有音乐端点，音乐页有 Cloudflare 拦截（403）；FreePD 已关站。改用 **Wikimedia Commons API**（免 key、直链、许可元数据齐全）。
+- **许可口径**：CC0 / Public domain 优先；**CC BY / CC BY-SA 可商用但需署名**——发布时在简介注明 manifest 里的 artist 与 license；NC/ND/未知许可一律跳过不下载。
+- **产物**：`dig-media/music-<关键词slug>/` 下 `music-<pageid>.mp3|wav` + manifest.json（含标题/许可/作者/时长/来源页）。
+- **网络注意**：Commons 直连不稳（node fetch 超时），脚本已内置 curl 多代理兜底（$ISKILL_PROXY → 环境 → http://127.0.0.1:10080）；仍失败时换时段重试。
+- **关键词**：用英文音乐词（"happy ukulele" "acoustic folk" "upbeat corporate"），Commons 收录以英文曲名为主；词太长太泛会 0 命中（全词 AND）。
 
 ## 产出结构
 
