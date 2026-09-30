@@ -108,7 +108,8 @@ dig-media/ai-<关键词slug>/       # AI 生成素材（协议产出，计费）
 2. prompt 用**英文**写视觉描述（与图库关键词同理，命中率高）；不写文字/水印要求（字幕由剪辑管线负责）
 3. manifest.json 记录的 credits 是**估算值**（工具无余额查询），交付时注明「估算口径」
 4. AI 画面有「AI 感」：真实感选题（纪实/人物/手作）把 AI 镜头限定在空镜/氛围/转场镜，不要替代实拍主体镜
-5. 与 clipper 的关系：clipper 的 `--engine aigc-mix / aigc-full` 模式按本节协议取料；`--engine local` 时本节不启用
+5. 与 clipper 的关系：clipper 的 `--engine aigc-mix / aigc-full` 模式按本节协议取料；`--engine local` 时本节不启用——**例外：封面等「单点用途」用户明确要 AI 时，可单独走 ai-image，不影响引擎档位**
+6. **封面单图用例**：用户要「封面用AI」时只调 ai-image 单张（竖屏 `1024x1536`，横版平台按 `1536x1024`），prompt = 选题核心画面 + 与成片一致的 style 后缀；单张 5-10 credits，事前确认；落 `dig-media/ai-封面-<slug>/` 并记 manifest
 
 ## 注意事项
 
