@@ -31,17 +31,19 @@ window.PROMO = {
         meta2: "双供给线",
         meta3: "manifest 溯源"
       },
-      terminal: {
-        title: "zsh — iskill-dig-media",
-        lines: [
-          [{ t: "$ ", c: "p" }, { t: "node scripts/dig_media.mjs search --kw \"farm harvest\" --type all --per-page 12", c: "k" }],
-          [{ t: "→ ", c: "p" }, { t: "返回 JSON：id / 尺寸 / 标签 / 页面链接（只看不下）", c: "" }],
-          [{ t: "$ ", c: "p" }, { t: "node scripts/dig_media.mjs get --kw \"farm harvest\" --n 6 --out ./dig-media", c: "k" }],
-          [{ t: "✓ ", c: "p" }, { t: "落盘 dig-media/farm-harvest/ · 写入 manifest.json", c: "s" }],
-          [{ t: "$ ", c: "p" }, { t: "node scripts/dig_media.mjs music --kw \"happy ukulele\" --n 3 --out ./dig-media", c: "k" }],
-          [{ t: "✓ ", c: "p" }, { t: "落盘 dig-media/music-happy-ukulele/（Wikimedia Commons，CC0/PD 优先）", c: "s" }]
+      chat: {
+        title: "AI Agent · 对话现场",
+        status: "在线",
+        userLabel: "你",
+        agentLabel: "AI",
+        messages: [
+          { role: "user", text: "给我的农场短视频找 6 条丰收素材" },
+          { role: "agent", text: "先搜预览给你看标签和尺寸，确认后再下载；关键词用英文更准，图库素材免费可商用、免署名。", tag: "Pixabay 命中 42 条" },
+          { role: "user", text: "再要一条 BGM" },
+          { role: "agent", text: "音乐走 Wikimedia Commons 源：CC0/PD 优先，CC BY 的会把署名信息写进 manifest.json，免 key 直接下。" }
         ]
       },
+
 
       stats: [
         { value: "3", label: "脚本子命令", note: "search / get / music" },
@@ -130,17 +132,19 @@ window.PROMO = {
         meta2: "Two supply lines",
         meta3: "Manifest provenance"
       },
-      terminal: {
-        title: "zsh — iskill-dig-media",
-        lines: [
-          [{ t: "$ ", c: "p" }, { t: "node scripts/dig_media.mjs search --kw \"farm harvest\" --type all --per-page 12", c: "k" }],
-          [{ t: "→ ", c: "p" }, { t: "returns JSON: id / size / tags / page link (preview only)", c: "" }],
-          [{ t: "$ ", c: "p" }, { t: "node scripts/dig_media.mjs get --kw \"farm harvest\" --n 6 --out ./dig-media", c: "k" }],
-          [{ t: "✓ ", c: "p" }, { t: "saved to dig-media/farm-harvest/ · wrote manifest.json", c: "s" }],
-          [{ t: "$ ", c: "p" }, { t: "node scripts/dig_media.mjs music --kw \"happy ukulele\" --n 3 --out ./dig-media", c: "k" }],
-          [{ t: "✓ ", c: "p" }, { t: "saved to dig-media/music-happy-ukulele/ (Wikimedia Commons, CC0/PD first)", c: "s" }]
+      chat: {
+        title: "AI Agent · live session",
+        status: "online",
+        userLabel: "You",
+        agentLabel: "AI",
+        messages: [
+          { role: "user", text: "Find me 6 harvest clips for my farm video" },
+          { role: "agent", text: "I'll search previews first so you can check tags and sizes, then download. English keywords match better, and stock clips are free for commercial use with no attribution.", tag: "42 Pixabay hits" },
+          { role: "user", text: "I also need a BGM" },
+          { role: "agent", text: "Music comes from Wikimedia Commons: CC0/PD first, and CC BY attribution gets written into manifest.json. No API key needed." }
         ]
       },
+
 
       stats: [
         { value: "3", label: "script subcommands", note: "search / get / music" },
