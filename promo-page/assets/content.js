@@ -82,13 +82,14 @@ window.PROMO = {
       steps: {
         eyebrow: "上手",
         title: "三步跑起来",
-        sub: "",
+        sub: "命令由 agent 跑，你只说要什么、看结果。",
         items: [
           { title: "交给 AI 装", desc: "把这句话粘进对话框，agent 会自己拉代码、读文档，再告诉你用法。", codeKey: "install" },
-          { title: "下几条图库素材", desc: "关键词用英文；数量确定可直接 get，拿不准先 search 看标签。", codeName: "bash", code: "node scripts/dig_media.mjs get --kw \"farm harvest\" --n 6 --out ./dig-media" },
-          { title: "再挖一条 BGM", desc: "音乐走 Wikimedia Commons，免 key，CC0/PD 优先。", codeName: "bash", code: "node scripts/dig_media.mjs music --kw \"happy ukulele\" --n 3 --out ./dig-media" }
+          { title: "说要什么素材", desc: "关键词用英文更准；拿不准就让 agent 先搜预览再下。", codeName: "prompt", code: "给我的农场短视频找 6 条丰收的图库素材，下到 ./dig-media/" },
+          { title: "翻清单挑素材", desc: "下载清单与署名信息在 manifest.json，你翻一遍挑要用的；要 BGM 就再让它挖一条。" }
         ]
       },
+
 
       faq: {
         eyebrow: "问答",
@@ -180,13 +181,14 @@ window.PROMO = {
       steps: {
         eyebrow: "Get started",
         title: "Up and running in three steps",
-        sub: "",
+        sub: "The agent runs the commands. You say what you want and check the result.",
         items: [
           { title: "Let your agent install it", desc: "Paste the line into the chat — it clones the repo, reads the docs, and tells you how to use it.", codeKey: "install" },
-          { title: "Fetch some stock", desc: "Use English keywords; if the count is clear, get directly — otherwise search first to see tags.", codeName: "bash", code: "node scripts/dig_media.mjs get --kw \"farm harvest\" --n 6 --out ./dig-media" },
-          { title: "Dig a BGM track", desc: "Music comes from Wikimedia Commons, key-free, CC0/PD first.", codeName: "bash", code: "node scripts/dig_media.mjs music --kw \"happy ukulele\" --n 3 --out ./dig-media" }
+          { title: "Say what footage you need", desc: "English keywords match better. Unsure? Have it search and preview before downloading.", codeName: "prompt", code: "Find me 6 stock clips of a farm harvest for my short video and download them to ./dig-media/" },
+          { title: "Pick from the manifest", desc: "Downloads and attribution land in manifest.json — skim it and choose. Need music? Ask it to dig up a BGM too." }
         ]
       },
+
 
       faq: {
         eyebrow: "FAQ",
