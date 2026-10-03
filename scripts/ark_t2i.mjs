@@ -8,13 +8,21 @@
 //   ③ 档位矩阵：seedream 生图全档可用；seedance 生视频仅 Large/Max 档（勿在此走视频）。
 //
 // 用法:
-//   node ark_t2i.mjs "<prompt>" [--out <dir>] [--name <file>] [--size 1024x1536]
-//                    [--model <id>] [--style "<风格后缀>"] [--slug <目录slug>]
+//   node ark_t2i.mjs "<prompt>" [--out <dir>] [--name <file>] [--size WxH]
+//                    [--aspect 9:16|3:4|2:3|1:1|16:9|4:3] [--model <id>]
+//                    [--style "<风格后缀>"] [--slug <目录slug>]
 //   prompt 建议中文视觉描述；--style 默认追加纪实摄影风（与成片调性一致）。
+//   --aspect 把生成尺寸对齐到目标视频画幅（1K 档 WxH，seedream 实测接受任意 WxH；
+//   2026-10-03 教训：图比例 ≠ 视频画幅时合成必出暗带——生图前先定画幅）。
 // 凭据: ~/.iskill-dig-media.json 的 ark_plan_key / ark_plan_base_url / ark_plan_model
 //       （没有则打印配置指引并退出 2，与 dig_media.mjs 同约定）
 // 产物: <out>/<name> + 增量写 <out>/manifest.json（prompt/参数/时间，溯源凭证）
 // 退出码: 0 成功 / 1 生成失败 / 2 配置缺失
+
+const ASPECT_SIZE = {            // 1K 档（实测 seedream 自由接受 WxH）
+  "9:16": "864x1536", "3:4": "1152x1536", "2:3": "1024x1536",
+  "1:1": "1024x1024", "16:9": "1536x864", "4:3": "1536x1152",
+};
 
 import fs from "node:fs";
 import path from "node:path";
@@ -54,7 +62,11 @@ if (!KEY || !BASE || !MODEL) {
 }
 
 const prompt = [args._.join(" "), args.style || DEFAULT_STYLE].filter(Boolean).join("，");
-const size = args.size || "1024x1536";
+if (args.aspect && !ASPECT_SIZE[args.aspect]) {
+  console.error(`不支持的 --aspect: ${args.aspect}（可选：${Object.keys(ASPECT_SIZE).join(" / ")}）`);
+  process.exit(2);
+}
+const size = args.size || ASPECT_SIZE[args.aspect] || "1024x1536";
 const model = args.model || MODEL;
 const slug = args.slug || slugify(prompt);
 const outDir = args.out || path.join(process.cwd(), "dig-media", `ai-${slug}`);
