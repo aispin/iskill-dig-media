@@ -160,8 +160,8 @@ cd /Users/lv/WorkBuddy/ISkills/deps/moneyprinterturbo
 5. 计费=AFP 燃料值（1 AFP≈¥0.002），seedream 5.0 pro 官方 75~300 AFP/张；图/视频模型无 5 小时/周限额，仅日额度（=月额度一半）+月额度；**额度按月清零不累积**
 6. 零费用探测法：POST 带 model 不带 content——缺 content 400=模型在套餐内；`UnsupportedModel` 404=不在
 
-**用法**：`node scripts/ark_t2i.mjs "<中文视觉描述>" --out ./dig-media/ai-<slug> [--aspect 9:16|3:4|2:3|1:1|16:9|4:3] [--size WxH] [--style "<后缀>"]`
-**⚠️ 生图前先定视频画幅，`--aspect` 让尺寸与画幅一致**（1K 档：9:16→864x1536、3:4→1152x1536、16:9→1536x864…；seedream 实测接受任意 WxH。图比例≠画幅 → 合成必出暗带或裁切损失，2026-10-03 教训）。
+**用法**：`node scripts/ark_t2i.mjs "<中文视觉描述>" --out ./dig-media/ai-<slug> [--aspect 9:16|3:4|2:3|1:1|16:9|4:3|2.39:1] [--size WxH] [--style "<后缀>"]`
+**⚠️ 生图前先定视频画幅，`--aspect` 让尺寸与画幅一致**（1K 档：9:16→864x1536、3:4→1152x1536、16:9→1536x864、2.39:1→1536x642（电影宽银幕，21:9 同值别名）…；seedream 实测接受任意 WxH。图比例≠画幅 → 合成必出暗带或裁切损失，2026-10-03 教训）。
 凭据在 `~/.iskill-dig-media.json`（`ark_plan_key/ark_plan_base_url/ark_plan_model`）。出图自动落 `<out>/` 并增量写 manifest.json。
 
 ## 注意事项
