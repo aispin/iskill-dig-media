@@ -12,8 +12,8 @@ window.PROMO = {
     /* ── 中文 ───────────────────────────────────────────────────────── */
     zh: {
       meta: {
-        title: "ISKILL-DIG-MEDIA · 缺素材时，图库与 AI 双线补给",
-        description: "一条命令从 Pixabay 挖免费图库素材（可商用免署名），或用 ImageGen / VideoGen 生成镜头；产物统一落 dig-media/ 并写 manifest.json 溯源。"
+        title: "ISKILL-DIG-MEDIA · 缺素材时，图库 / AI / MPT 三线补给",
+        description: "一条命令从 Pixabay 挖免费图库素材（可商用免署名），或用 ImageGen / VideoGen 生成镜头，也可走 MoneyPrinterTurbo 聚合 Pexels/Coverr 与 6+ 家 AI 文生视频；产物统一落 dig-media/ 并写 manifest.json 溯源。"
       },
       a11y: { skip: "跳到主要内容" },
       ui: { copy: "复制", copied: "已复制", failed: "复制失败" },
@@ -22,13 +22,13 @@ window.PROMO = {
       hero: {
         badge: "AI 技能",
         titlePre: "缺素材的时候，",
-        titleAccent: "图库与 AI 双线补给",
+        titleAccent: "图库 / AI / MPT 三线补给",
         titlePost: "",
-        sub: "一条命令从 Pixabay 挖免费图库素材（可商用免署名），或用会话内的 ImageGen / VideoGen 生成图片与镜头；产物统一落 dig-media/ 并写 manifest.json 溯源，供 iskill-video-clipper 等下游直接复用。",
+        sub: "一条命令从 Pixabay 挖免费图库素材（可商用免署名），或用会话内的 ImageGen / VideoGen 生成图片与镜头，也可走 MoneyPrinterTurbo 聚合 Pexels/Coverr 与 6+ 家 AI 文生视频；产物统一落 dig-media/ 并写 manifest.json 溯源，供 iskill-video-clipper 等下游直接复用。",
         ctaPrimary: "复制安装提示词",
         ctaSecondary: "看源码",
         meta1: "零依赖 Node",
-        meta2: "双供给线",
+        meta2: "三条供给线",
         meta3: "manifest 溯源"
       },
       chat: {
@@ -68,6 +68,7 @@ window.PROMO = {
           { icon: "camera", title: "图库挖掘", desc: "Pixabay 脚本下载，免费可商用免署名；先 search 看标签，再 get 落盘。" },
           { icon: "bolt", title: "AI 生成图片", desc: "ImageGen 出图或锚帧，约 5–10 credits/张，生成前必须确认。" },
           { icon: "monitor", title: "AI 生成视频", desc: "VideoGen 图生 / 文生视频约 5 秒，enable_audio 必关，锚帧优先保证风格一致。" },
+          { icon: "layers", title: "MPT 聚合素材档", desc: "MoneyPrinterTurbo CLI 一个入口聚合 Pexels/Coverr 与 6+ 家 AI 文生视频（只借素材不借合成）；AI 源计费须事前确认。" },
           { icon: "grid", title: "统一落盘", desc: "素材落 dig-media/<关键词>/，photo / video / music 分开归档。" },
           { icon: "layers", title: "manifest 溯源", desc: "查询词、许可、作者、尺寸、credits 全部记进 manifest.json。" },
           { icon: "shield", title: "许可安全", desc: "CC0 / PD 优先，CC BY 记署名信息，NC / ND / 未知许可一律跳过。" }
@@ -113,8 +114,8 @@ window.PROMO = {
     /* ── English ────────────────────────────────────────────────────── */
     en: {
       meta: {
-        title: "ISKILL-DIG-MEDIA · When you're short on assets, run two supply lines",
-        description: "One command digs free stock from Pixabay (commercial use, no attribution), or generates shots with ImageGen / VideoGen; everything lands in dig-media/ with a manifest.json for provenance."
+        title: "ISKILL-DIG-MEDIA · When you're short on assets, run three supply lines",
+        description: "One command digs free stock from Pixabay (commercial use, no attribution), generates shots with ImageGen / VideoGen, or aggregates Pexels/Coverr and 6+ AI text-to-video providers via MoneyPrinterTurbo; everything lands in dig-media/ with a manifest.json for provenance."
       },
       a11y: { skip: "Skip to content" },
       ui: { copy: "Copy", copied: "Copied", failed: "Copy failed" },
@@ -123,13 +124,13 @@ window.PROMO = {
       hero: {
         badge: "AI skill",
         titlePre: "When you're short on assets: ",
-        titleAccent: "stock and AI, two supply lines",
+        titleAccent: "stock, AI and MPT — three supply lines",
         titlePost: "",
-        sub: "One command digs free stock from Pixabay (commercial use, no attribution), or generates images and shots with the in-session ImageGen / VideoGen tools. Everything lands in dig-media/ with a manifest.json for provenance, ready for iskill-video-clipper and other downstream use.",
+        sub: "One command digs free stock from Pixabay (commercial use, no attribution), generates images and shots with the in-session ImageGen / VideoGen tools, or aggregates Pexels/Coverr and 6+ AI text-to-video providers via MoneyPrinterTurbo. Everything lands in dig-media/ with a manifest.json for provenance, ready for iskill-video-clipper and other downstream use.",
         ctaPrimary: "Copy install prompt",
         ctaSecondary: "View source",
         meta1: "Dependency-free Node",
-        meta2: "Two supply lines",
+        meta2: "Three supply lines",
         meta3: "Manifest provenance"
       },
       chat: {
@@ -169,6 +170,7 @@ window.PROMO = {
           { icon: "camera", title: "Stock digging", desc: "Scripted Pixabay downloads: free, commercial-use, no attribution. search to preview, get to save." },
           { icon: "bolt", title: "AI image generation", desc: "ImageGen for images or anchor frames, about 5–10 credits each, confirmed before generating." },
           { icon: "monitor", title: "AI video generation", desc: "VideoGen image-to-video or text-to-video ~5s; enable_audio must be off; anchor frames keep style consistent." },
+          { icon: "layers", title: "MPT aggregated sourcing", desc: "MoneyPrinterTurbo CLI aggregates Pexels/Coverr and 6+ AI text-to-video providers in one entry (materials only, not composition); billable AI sources need up-front confirmation." },
           { icon: "grid", title: "One landing folder", desc: "Assets save to dig-media/<slug>/, with photo / video / music kept separate." },
           { icon: "layers", title: "Manifest provenance", desc: "Query, license, artist, size and credits all go into manifest.json." },
           { icon: "shield", title: "License safety", desc: "CC0 / PD first, CC BY records attribution, NC / ND / unknown are always skipped." }
