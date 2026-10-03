@@ -66,7 +66,8 @@ if (args.aspect && !ASPECT_SIZE[args.aspect]) {
   console.error(`不支持的 --aspect: ${args.aspect}（可选：${Object.keys(ASPECT_SIZE).join(" / ")}）`);
   process.exit(2);
 }
-const size = args.size || ASPECT_SIZE[args.aspect] || "1024x1536";
+const size = args.size || ASPECT_SIZE[args.aspect] || ASPECT_SIZE["9:16"];
+// 默认 9:16（与成片默认画幅一致）；16:9 / 3:4 仅用户显式指定时使用
 const model = args.model || MODEL;
 const slug = args.slug || slugify(prompt);
 const outDir = args.out || path.join(process.cwd(), "dig-media", `ai-${slug}`);
