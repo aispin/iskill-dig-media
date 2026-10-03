@@ -1,7 +1,7 @@
 ---
 name: iskill-dig-media
 summary: 素材供给中心——Pixabay 图库挖掘（免费）+ AI 图片/视频生成（计费）双供给，统一落盘 dig-media/ 并写 manifest 溯源。
-description: 当用户要给视频/文案配素材、问「找些农场素材」「搜配图」「下几条视频素材」，需要 AI 生成图片/视频素材（「AI 生成一个镜头」「生成空镜视频」），或 iskill-video-clipper 缺素材/AIGC 模式需要补料时使用。触发词：找素材、搜素材、dig media、素材站、pixabay、AI 生成素材。三种供给：①Pixabay 图库（脚本化、免费、可商用免署名）；②AI 生成图片（ImageGen，5-10 credits/张）；③AI 生成视频（VideoGen，约 50-100 credits/5 秒）。产物统一落 {工作区}/dig-media/ 并写 manifest.json 溯源。
+description: 当用户要给视频/文案配素材、问「找些农场素材」「搜配图」「下几条视频素材」，需要 AI 生成图片/视频素材（「AI 生成一个镜头」「生成空镜视频」），要聚合多源图库/AI 文生视频（MoneyPrinterTurbo / MPT / Pexels / Seedance），或 iskill-video-clipper 缺素材/AIGC 模式需要补料时使用。触发词：找素材、搜素材、dig media、素材站、pixabay、pexels、AI 生成素材、moneyprinterturbo。四种供给：①Pixabay 图库（脚本化、免费、可商用免署名）；②AI 生成图片（ImageGen，5-10 credits/张）；③AI 生成视频（VideoGen，约 50-100 credits/5 秒）；④MPT 聚合素材档（MoneyPrinterTurbo CLI，聚合 Pexels/Coverr + 6+ 家 AI 文生视频，只借素材不借合成）。产物统一落 {工作区}/dig-media/ 并写 manifest.json 溯源。
 ---
 
 # iskill-dig-media
@@ -110,6 +110,40 @@ dig-media/ai-<关键词slug>/       # AI 生成素材（协议产出，计费）
 4. AI 画面有「AI 感」：真实感选题（纪实/人物/手作）把 AI 镜头限定在空镜/氛围/转场镜，不要替代实拍主体镜
 5. 与 clipper 的关系：clipper 的 `--engine aigc-mix / aigc-full` 模式按本节协议取料；`--engine local` 时本节不启用——**例外：封面等「单点用途」用户明确要 AI 时，可单独走 ai-image，不影响引擎档位**
 6. **封面单图用例**：用户要「封面用AI」时只调 ai-image 单张（竖屏 `1024x1536`，横版平台按 `1536x1024`），prompt = 选题核心画面 + 与成片一致的 style 后缀；单张 5-10 credits，事前确认；落 `dig-media/ai-封面-<slug>/` 并记 manifest
+
+## MPT 聚合素材档（MoneyPrinterTurbo，可选装）
+
+**定位**：第三条供给线——把 [MoneyPrinterTurbo](https://github.com/harry0703/MoneyPrinterTurbo)（MIT，~123k stars）当**多源素材聚合器**用：一个入口聚合 Pexels / Pixabay / Coverr 图库 + **6+ 家 AI 文生视频**（火山 Seedance / WaveSpeed / MuAPI / MiniMax H3 / OFox / OpenAI 文生图）。**只借素材，不借合成**——它的合成档位弱于 iskill-video-clipper 主链路（无 blur-fill、无节拍卡点、CLI 字幕是坏的，2026-10-03 实测，见 clipper 仓 `docs/MoneyPrinterTurbo-接入调研.md`）。
+
+**安装（一次性，沙箱内可跑）**：
+```bash
+git clone --depth 1 https://github.com/harry0703/MoneyPrinterTurbo.git /Users/lv/WorkBuddy/ISkills/deps/moneyprinterturbo
+cd /Users/lv/WorkBuddy/ISkills/deps/moneyprinterturbo && ~/.local/bin/uv run python cli.py --help
+```
+> ⚠️ 用 **uv** 别用 pip——沙箱里 pip 安装被 broker 拦，`uv run` 实测 **17s** 装完全量锁死依赖（uv 在 `~/.local/bin/uv`，不在默认 PATH）。
+
+**只借素材（推荐姿势）**：
+```bash
+cd /Users/lv/WorkBuddy/ISkills/deps/moneyprinterturbo
+~/.local/bin/uv run python cli.py \
+  --video-script "<成稿>" --video-terms "<英文关键词,逗号分隔>" \
+  --video-source pexels --stop-at materials
+```
+- `--stop-at materials` = 只跑到素材阶段就停（另可 `--stop-at terms` 只拿「文案→搜索关键词」的中间产物）
+- `--video-source` 可选：`pexels` / `pixabay` / `coverr`（免费图库）｜ `wavespeed` / `volcengine_seedance` / `ofox` / `metaso_minimax` / `muapi` / `openai_image`（AI 文生视频/图，**计费**）
+- 产物在它仓库的 `storage/tasks/<task-id>/` 与 `storage/local_videos/`，**输出路径不可指定** → 搬回 `dig-media/<slug>/` 并补 manifest.json 溯源
+- **AI 源计费确认机制**：未确认时 CLI 以退出码 10 返回 `XXX_CHARGE_CONFIRMATION_REQUIRED`，**必须**把成本讲给用户、拿到明确同意后加 `--confirm-<源>-charge` 重跑——与本项目「credits 事前确认」铁律同构，**不得静默加旗标**
+- `--video-materials` 只收**逗号分隔的文件路径**（不收目录），配合 `--video-source local`
+
+**零 key 冒烟**（2026-10-03 P1 实测六项全通过）：`--video-script + --video-terms + --custom-audio-file + --video-source local` 可全程不配 key 跑通整条流水线（含整片直出，1m15s）。
+
+**key 配置**：MPT 用仓库内自己的 `config.toml`（首跑从 `config.example.toml` 自动生成），Pexels / 各 AI 源 key 填在那里；**不要把 key 写进任何会被推送的文件**。
+
+**硬约束**：
+1. **只走 CLI，永不起它的 WebUI/API 服务**——无鉴权，v1.2.x 及更早还有 6 个已知 CVE
+2. **不支持并发任务**——操盘团多分支并行时排队跑
+3. 它的内置曲库来自 YouTube，**别用**（版权）；BGM 一律走本 skill 的 `music` 命令
+4. 本地素材喂它时横屏图会被 `cover` 裁切腰斩——**这只是素材预处理损失**；素材仍要回到我们自己的管线出片
 
 ## 注意事项
 
