@@ -40,6 +40,9 @@ node scripts/dig_media.mjs get --kw "rice field" --type video --n 4 --min-width 
 
 # 挖 BGM 音乐（Wikimedia Commons 源，免 key）：CC0/PD 优先，CC BY 记录署名信息
 node scripts/dig_media.mjs music --kw "happy ukulele" --n 3 --out ./dig-media
+
+# Ark seedream 文生图直连（Agent Plan 套餐，watermark 已关）：
+node scripts/ark_t2i.mjs "秋天的板栗林小径，地面散落带刺的板栗壳与断枝，晨光" --out ./dig-media/ai-捡秋素材
 ```
 
 ## 音乐（BGM）说明
@@ -144,6 +147,21 @@ cd /Users/lv/WorkBuddy/ISkills/deps/moneyprinterturbo
 2. **不支持并发任务**——操盘团多分支并行时排队跑
 3. 它的内置曲库来自 YouTube，**别用**（版权）；BGM 一律走本 skill 的 `music` 命令
 4. 本地素材喂它时横屏图会被 `cover` 裁切腰斩——**这只是素材预处理损失**；素材仍要回到我们自己的管线出片
+
+## Ark 生图直连（Agent Plan seedream，scripts/ark_t2i.mjs）
+
+**定位**：ai-image 协议的**第二供给源**——不走会话 ImageGen（计 credits），走用户自己的火山方舟 Agent Plan 订阅额度（AFP），单张成本更低且可关水印。2026-10-03 实测全链路可用。
+
+**硬事实（实测，别凭记忆改）**：
+1. Agent Plan 的 key 是**专属 key**，只能打 `https://ark.cn-beijing.volces.com/api/plan/v3`（OpenAI 兼容）；打普通 `/api/v3` 必 401
+2. **档位矩阵**：`doubao-seedream-5-0-pro` 生图 **Small/Medium/Large/Max 全档可用**；`doubao-seedance-*` **生视频仅 Large(¥500/月)/Max(¥1000/月)**，Small/Medium 调用报 `UnsupportedModel: does not support the agent plan feature`
+3. **`watermark:false` 可关「AI生成」角标**——MPT 的 openai_image 源发不出这参数，所以正式生产用本脚本
+4. ⚠️ **合规红线**：官方明确文本/向量化模型不可用于 API 调用（非 AI 工具使用可能封号）；生图/生视频有专用任务路由属套餐范围
+5. 计费=AFP 燃料值（1 AFP≈¥0.002），seedream 5.0 pro 官方 75~300 AFP/张；图/视频模型无 5 小时/周限额，仅日额度（=月额度一半）+月额度；**额度按月清零不累积**
+6. 零费用探测法：POST 带 model 不带 content——缺 content 400=模型在套餐内；`UnsupportedModel` 404=不在
+
+**用法**：`node scripts/ark_t2i.mjs "<中文视觉描述>" --out ./dig-media/ai-<slug> [--size 1024x1536] [--style "<后缀>"]`
+凭据在 `~/.iskill-dig-media.json`（`ark_plan_key/ark_plan_base_url/ark_plan_model`）。出图自动落 `<out>/` 并增量写 manifest.json。
 
 ## 注意事项
 
