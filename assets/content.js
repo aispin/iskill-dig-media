@@ -66,7 +66,7 @@ window.PROMO = {
         sub: "",
         items: [
           { icon: "camera", title: "图库挖掘", desc: "Pixabay 脚本下载，免费可商用免署名；先 search 看标签，再 get 落盘。" },
-          { icon: "bolt", title: "AI 生成图片", desc: "ImageGen 出图或锚帧，约 5–10 credits/张，生成前必须确认。" },
+          { icon: "bolt", title: "AI 生成图片", desc: "ImageGen 出图或锚帧（约 5–10 credits/张），也可走自有火山方舟订阅直连（seedream，可关水印），生成前必须确认。" },
           { icon: "monitor", title: "AI 生成视频", desc: "VideoGen 图生 / 文生视频约 5 秒，enable_audio 必关，锚帧优先保证风格一致。" },
           { icon: "layers", title: "MPT 聚合素材档", desc: "MoneyPrinterTurbo CLI 一个入口聚合 Pexels/Coverr 与 6+ 家 AI 文生视频（只借素材不借合成）；AI 源计费须事前确认。" },
           { icon: "grid", title: "统一落盘", desc: "素材落 dig-media/<关键词>/，photo / video / music 分开归档。" },
