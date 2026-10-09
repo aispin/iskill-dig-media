@@ -171,3 +171,15 @@ cd /Users/lv/WorkBuddy/ISkills/deps/moneyprinterturbo
 - 429（限频）等一分钟重试；BAD_KEY 按配置指引重新核对。
 - 未来扩展 Pexels/其他站：key 写进同一个文件（`{"pixabay":"...","pexels":"..."}`），脚本加 `--source` 参数——目前只实现了 pixabay。
 - **配置解藕约定**：本 skill 系列的配置文件一律存用户主目录 `~/.iskill-*`（如 `~/.iskill-dig-media.json`、`~/.iskill-weixin-cookies.txt`），不绑死任何 agent 的工作区；旧 agent 目录里的同名文件仅作遗留兼容读取。
+
+## 依赖同步
+
+本仓库 `promo-page/assets/{app.js,style.css,icons.js}` 是 [iskill-promo-page](https://github.com/aispin/iskill-promo-page)
+模板引擎的 vendored 副本（锁定版本见 `package.json` 的 `iskillDeps`），**不要手改**——
+去真源仓库改并升 `@iskill-version`，再用 iskill-dep-sync 同步回来（本机无该工具时按下面自举）：
+
+```bash
+T="$HOME/.workbuddy/skills/iskill-dep-sync/scripts/skill-deps.mjs"
+[ -f "$T" ] || { TMP="$(mktemp -d)"; curl -fsSL "https://raw.githubusercontent.com/aispin/iskill-dep-sync/HEAD/scripts/skill-deps.mjs" -o "$TMP/skill-deps.mjs"; T="$TMP/skill-deps.mjs"; }
+node "$T" check "$(pwd)"     # 漂移检测；node "$T" sync "$(pwd)" 恢复/升级；node "$T" env "$(pwd)" 冷启动自检
+```
